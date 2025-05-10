@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Великий Квест Елдорії</title>
+    <style>
+        body {
+            font-family: 'Georgia', serif;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+        #game-container {
+            width: 80%;
+            max-width: 800px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+        }
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+        .description {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .btn {
+            background-color: #8e44ad;
+            color: #fff;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #9b59b6;
+        }
+        .inventory {
+            margin-top: 20px;
+            font-size: 1rem;
+            color: #f39c12;
+        }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <h1>Великий Квест Елдорії</h1>
+    <div class="description" id="description"></div>
+    <div class="options" id="options"></div>
+    <div class="inventory" id="inventory"></div>
+</div>
+
+<script>
+    const game = {
+        health: 100,
+        inventory: [],
+        currentLocation: "start",
+        isPlaying: true,
+        locations: {
+            start: {
+                description: "Ти опиняєшся на перехресті доріг. Три шляхи ведуть: один — в таємничий ліс, інший — до древнього замку, третій — до печери, з якої виходить дивний світло.",
+                options: {
+                    forest: "Йти до лісу",
+                    castle: "Йти до замку",
+                    cave: "Йти до печери"
+                }
+            },
+            forest: {
+                description: "Ліс густий, в повітрі запахи хвойних дерев. Раптом ти чуєш шум, і перед тобою з'являється дикий ведмідь! Ти готовий до бою?",
+                options: {
+                    fight: "Битися з ведмедем",
+                    run: "Втекти в глиб лісу",
+                    back: "Повернутися назад"
+                }
+            },
+            castle: {
+                description: "Замок старий, вікна тріснуті, двері скриплять. В середині ти знаходиш артефакт, що світиться. Ти можеш його забрати чи залишити.",
+                options: {
+                    take: "Взяти артефакт",
+                    leave: "Залишити артефакт",
+                    back: "Повернутися назад"
+                }
+            },
+            cave: {
+                description: "Ти входиш у печеру, яка освітлюється дивним світлом. На стінах наче ведуться стародавні руни. Що ти зробиш?",
+                options: {
+                    read: "Прочитати руни",
+                    explore: "Дослідити глибше печеру"
+                }
+            },
+            end: {
+                description: "Ти досягнув кінця шляху. Твоя пригода завершена, але майбутнє Елдорії залишилось в твоїх руках.",
+                options: {
+                    restart: "Почати заново"
+                }
+            }
+        },
+
+        describeLocation: function () {
+            const location = this.locations[this.currentLocation];
+            document.getElementById("description").textContent = location.description;
+        },
+
+        showOptions: function () {
+            const location = this.locations[this.currentLocation];
+            const optionsContainer = document.getElementById("options");
+            optionsContainer.innerHTML = "";
+            for (let option in location.options) {
+                const button = document.createElement("a");
+                button.classList.add("btn");
+                button.textContent = location.options[option];
+                button.onclick = () => this.handleChoice(option);
+                optionsContainer.appendChild(button);
+            }
+        },
+
+        showInventory: function () {
+            const inventoryContainer = document.getElementById("inventory");
+            if (this.inventory.length > 0) {
+                inventoryContainer.textContent = "Твій інвентар: " + this.inventory.join(", ");
+            } else {
+                inventoryContainer.textContent = "У тебе немає предметів в інвентарі.";
+            }
+        },
+
+        handleChoice: function (choice) {
+            switch (this.currentLocation) {
+                case "start":
+                    if (choice === "forest") {
+                        this.currentLocation = "forest";
+                    } else if (choice === "castle") {
+                        this.currentLocation = "castle";
+                    } else if (choice === "cave") {
+                        this.currentLocation = "cave";
+                    }
+                    break;
+                case "forest":
+                    if (choice === "fight") {
+                        this.fightBear();
+                    } else if (choice === "run") {
+                        this.runFromBear();
+                    }
+                 else if (choice === "back") {
+                    this.currentLocation = "start";
+                    }
+                    break;
+                case "castle":
+                    if (choice === "take") {
+                        this.takeArtifact();
+                    } else if (choice === "leave") {
+                        this.leaveArtifact();
+                    }
+                    break;
+                case "cave":
+                    if (choice === "read") {
+                        this.readRunes();
+                    } else if (choice === "explore") {
+                        this.exploreCave();
+                    }
+                    break;
+                case "end":
+                    if (choice === "restart") {
+                        this.resetGame();
+                    }
+                    break;
+            }
+            this.describeLocation();
+            this.showOptions();
+            this.showInventory();
+        },
+
+        fightBear: function () {
+            this.health -= 30;
+            alert("Ти б'ється з ведмедем! Ти отримав 30 пошкоджень.");
+            if (this.health <= 0) {
+                this.endGame("Ти помер від поранень, гра завершена!");
+            }
+        },
+
+        runFromBear: function () {
+            this.health -= 10;
+            alert("Ти втік від ведмедя, але отримав 10 пошкоджень.");
+            if (this.health <= 0) {
+                this.endGame("Ти помер від втоми, гра завершена!");
+            }
+        },
+
+        takeArtifact: function () {
+            this.inventory.push("Магічний артефакт");
+            alert("Ти взяв магічний артефакт!");
+        },
+
+        leaveArtifact: function () {
+            alert("Ти залишив артефакт і покинув замок.");
+        },
+
+        readRunes: function () {
+            alert("Ти прочитав руни і дізнався важливу інформацію про майбутнє.");
+            this.currentLocation = "end";
+        },
+
+        exploreCave: function () {
+            alert("Ти поглибився в печеру і знайшов підземне озеро.");
+            this.currentLocation = "end";
+        },
+
+        endGame: function (message) {
+            alert(message);
+            this.isPlaying = false;
+            this.resetGame();
+        },
+
+        resetGame: function () {
+            this.health = 100;
+            this.inventory = [];
+            this.currentLocation = "start";
+            this.describeLocation();
+            this.showOptions();
+            this.showInventory();
+        }
+    };
+
+    game.describeLocation();
+    game.showOptions();
+    game.showInventory();
+</script>
+
+</body>
+</html>
