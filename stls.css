@@ -1,0 +1,74 @@
+
+body {
+    margin: 0;
+    font-family: 'Georgia', serif;
+    background: #1e1e1e;
+    color: darkred;
+  }
+  
+  header, footer {
+    background: #2c2c2c;
+    padding: 1rem;
+    text-align: center;
+  }
+  
+  nav ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+  }
+  
+  nav a {
+    color: #ffe98a;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  .intro, section {
+    text-align: center;
+    padding: 2rem;
+  }
+  
+  .buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .btn {
+    padding: 0.75rem 1.5rem;
+    background-color: #5a3e8a;
+    color: rgb(19, 222, 110);
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background 0.3s ease;
+  }
+  
+  .btn:hover {
+    background-color: #7c57c6;
+  }
+  
+  .forest-bg {
+    background: url('media/forest.jpg') no-repeat center center/cover;
+  }
+  
+  .castle-bg {
+    background: url('media/castle.jpg') no-repeat center center/cover;
+  }
+  #quest-container .buttons button {
+    padding: 0.75rem 1.5rem;
+    background-color: #3d2a5a;
+    color: #ffe98a;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    font-size: 1rem;
+  }
+  
+  #quest-container .buttons button:hover {
+    background-color: #5c3b8a;
+  }
